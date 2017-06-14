@@ -12,9 +12,8 @@ from Products.CMFPlone.utils import getToolByName
 from Products.CMFDefault.formlib.schema import ProxyFieldProperty
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 
-from plone.app.controlpanel.form import ControlPanelForm
+from plone.app.registry.browser import controlpanel
 
-from plone.fieldsets.fieldsets import FormFieldsets
 
 from tlspu.cookiepolicy import TCPMessageFactory as _
 
@@ -66,15 +65,17 @@ class CookiePolicyControlPanelAdapter(BaseControlPanelAdapter):
     TCP_title = ProxyFieldProperty(ICookiePolicySchema['TCP_title'])
     TCP_message = ProxyFieldProperty(ICookiePolicySchema['TCP_message'])
 
-baseset = FormFieldsets(ICookiePolicySchema)
-baseset.id = 'cookiepolicy'
-baseset.label = _(u'Cookie Policy')
 
-
-class CookiePolicyControlPanel(ControlPanelForm):
+class CookiePolicyControlPanelForm(controlpanel.RegistryEditForm):
     """ """
-    form_fields = FormFieldsets(baseset)
-
+    id = 'CookiePolicyControlPanel'
     label = _('Cookie Policy settings')
     description = _('Configure settings for Cookie Policy.')
     form_name = _('Cookie Policy')
+    schema = ICookiePolicySchema
+    schema_prefix = 'tlspu.cookiepolicy'
+
+
+class CookiePolicyControlPanel(controlpanel.ControlPanelFormWrapper):
+    form = CookiePolicyControlPanelForm
+
